@@ -8,14 +8,8 @@ within the 'word/document.xml' section of a MSWord .dotm file.
 import argparse
 import os
 import sys
-from oletools.olevba3 import (
-    VBA_Parser,
-    TYPE_OLE,
-    TYPE_OpenXML,
-    TYPE_Word2003_XML,
-    TYPE_MHTML,
-)
-
+import re
+import docx2txt
 
 def check_args(args=None):
     parser = argparse.ArgumentParser(
@@ -35,23 +29,16 @@ def check_args(args=None):
 
 def search_directory(dir_name, search_string):
     filenames = [
-        filename
+        os.path.join(dir_name, filename)
         for filename in os.listdir(dir_name)
         if filename.lower().endswith(".dotm")
     ]
     for filename in filenames:
-        # with open(filename, "rb") as f_obj:
-        #     f_data = f_obj.read()
-        #     vbaparser = VBA_Parser(filename, f_data)
-        #     # try:
-        #     #     print(vbaparser.reveal())
-        #     # except Exception:
-        #     #     pass
-        #     # finally:
-        #     #     vbaparser.close()
-        document = Document(filename)
-        print(dir(document))
-        document.close()
+        text = docx2txt.process(filename)
+        match = re.search(r'[\s\S]{,40}\$[\s\S]{,40}', text)
+        if match:
+            print("Match found in file {}".format(filename))
+            print("\t...{}...".format(match.group().encode('ascii', 'ignore')))
 
 
 if __name__ == "__main__":
