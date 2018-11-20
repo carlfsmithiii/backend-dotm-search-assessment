@@ -36,7 +36,7 @@ def search_directory(dir_name, search_string):
     match_count = 0
     for filename in filenames:
         text = docx2txt.process(filename)
-        match = re.search(r'[\s\S]{,40}\$[\s\S]{,40}', text)
+        match = re.search(r'[\s\S]{,40}' + re.escape(search_string) + '[\s\S]{,40}', text)
         if match:
             match_count += 1
             print("Match found in file {}".format(filename))
