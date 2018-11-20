@@ -33,12 +33,16 @@ def search_directory(dir_name, search_string):
         for filename in os.listdir(dir_name)
         if filename.lower().endswith(".dotm")
     ]
+    match_count = 0
     for filename in filenames:
         text = docx2txt.process(filename)
         match = re.search(r'[\s\S]{,40}\$[\s\S]{,40}', text)
         if match:
+            match_count += 1
             print("Match found in file {}".format(filename))
             print("\t...{}...".format(match.group().encode('ascii', 'ignore')))
+    print("Total dotm files searched: {}".format(len(filenames)))
+    print("Total dotm files matched: {}".format(match_count))
 
 
 if __name__ == "__main__":
